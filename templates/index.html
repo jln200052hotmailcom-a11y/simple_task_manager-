@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Meu Gerenciador de Tarefas Simples</h1>
+
+        <div class="add-task">
+            <form action="/tasks" method="post">
+                <input type="text" name="description" placeholder="Adicionar nova tarefa..." required>
+                <button type="submit">Adicionar Tarefa</button>
+            </form>
+        </div>
+
+        <ul class="task-list">
+            {% if tasks %}
+                {% for task in tasks %}
+                <li class="task-item {% if task.completed %}completed{% endif %}">
+                    <span class="task-description">{{ task.description }}</span>
+                    <div class="task-actions">
+                        <form action="/tasks/{{ task.id }}/complete" method="post" style="display: inline;">
+                            <input type="hidden" name="completed" value="{{ 'false' if task.completed else 'true' }}">
+                            <button type="submit" class="toggle-complete">
+                                {% if task.completed %}Desmarcar{% else %}Concluir{% endif %}
+                            </button>
+                        </form>
+                        <form action="/tasks/{{ task.id }}/delete" method="post" style="display: inline;">
+                            <button type="submit" class="delete-task">Excluir</button>
+                        </form>
+                    </div>
+                </li>
+                {% endfor %}
+            {% else %}
+                <li class="no-tasks">Nenhuma tarefa cadastrada. Adicione uma!</li>
+            {% endif %}
+        </ul>
+    </div>
+</body>
+</html>
