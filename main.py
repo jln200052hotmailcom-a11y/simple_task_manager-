@@ -16,10 +16,12 @@ BASE_DIR = Path(__file__).resolve().parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
 
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     tasks = get_tasks()
     return templates.TemplateResponse("index.html", {"request": request, "tasks": tasks})
+
 
 @app.post("/tasks", response_class=RedirectResponse)
 async def add_task(request: Request, description: str = Form(...)):
@@ -27,11 +29,13 @@ async def add_task(request: Request, description: str = Form(...)):
         create_task(description.strip())
     return RedirectResponse(url="/", status_code=303)
 
+
 @app.post("/tasks/{task_id}/complete", response_class=RedirectResponse)
 async def toggle_complete_task(task_id: int, request: Request, completed: str = Form(...)):
     is_completed = completed.lower() == 'true'
     update_task_status(task_id, is_completed)
     return RedirectResponse(url="/", status_code=303)
+
 
 @app.post("/tasks/{task_id}/delete", response_class=RedirectResponse)
 async def remove_task(task_id: int, request: Request):
